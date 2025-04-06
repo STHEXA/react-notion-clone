@@ -4,8 +4,26 @@ import { Home } from "./pages/Home";
 import NoteDetail from "./pages/NoteDetail";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
+import { useEffect, useState, useCallback } from "react";
+import { useCurrentUserStore } from "./modules/auth/current-user.state";
+import { authRepository } from "./modules/auth/auth.repository";
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const currentUserStore = useCurrentUserStore();
+
+  const setSession = useCallback(async () => {
+    const currentUser = await authRepository.getCurrentUser();
+    currentUserStore.set(currentUser);
+    setIsLoading(false);
+  }, [currentUserStore]);
+
+  useEffect(() => {
+    setSession();
+  }, [setSession]);
+
+  if (isLoading) return <div />;
+
   return (
     <BrowserRouter>
       <div className="h-full">
