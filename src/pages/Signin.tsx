@@ -1,6 +1,16 @@
-import { Link } from 'react-router-dom';
+import { authRepository } from "@/modules/auth/auth.repository";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Signin() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const signup = async () => {
+    const user = await authRepository.signin(email, password);
+    console.log(user);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col items-center">
@@ -19,6 +29,7 @@ function Signin() {
                 </label>
                 <div className="mt-1">
                   <input
+                    onChange={(e) => setEmail(e.target.value)}
                     id="email"
                     name="email"
                     placeholder="メールアドレス"
@@ -37,6 +48,7 @@ function Signin() {
                 </label>
                 <div className="mt-1">
                   <input
+                    onChange={(e) => setPassword(e.target.value)}
                     id="password"
                     name="password"
                     placeholder="パスワード"
@@ -47,13 +59,17 @@ function Signin() {
                 </div>
               </div>
               <div>
-                <button className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring--500 disabled:opacity-50 disabled:cursor-not-allowed">
+                <button
+                  onClick={signup}
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring--500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={email === null || password === null}
+                >
                   ログイン
                 </button>
               </div>
               <div className="mt-4 text-center text-sm">
                 登録は
-                <Link className="underline" to={'/signup'}>
+                <Link className="underline" to={"/signup"}>
                   こちら
                 </Link>
                 から
