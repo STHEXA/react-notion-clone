@@ -6,7 +6,6 @@ import { useCurrentUserStore } from "./modules/auth/current-user.state";
 const Layout = () => {
   const { currentUser } = useCurrentUserStore();
 
-  console.log(currentUser);
   if (currentUser === undefined) {
     return <Navigate replace to="/signin" />;
   }
