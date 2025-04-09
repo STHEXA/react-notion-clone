@@ -1,5 +1,8 @@
-import { cn } from '@/lib/utils';
-import { NoteItem } from './NoteItem';
+import { cn } from "@/lib/utils";
+import { NoteItem } from "./NoteItem";
+import { useNoteStore } from "@/modules/notes/note.state";
+import { useCurrentUserStore } from "@/modules/auth/current-user.state";
+import { noteRepository } from "@/modules/notes/note.repository";
 
 interface NoteListProps {
   layer?: number;
@@ -7,13 +10,22 @@ interface NoteListProps {
 }
 
 export function NoteList({ layer = 0, parentId }: NoteListProps) {
-  const notes = [{}];
+  const noteStore = useNoteStore();
+  const notes = noteStore.getAll();
+  const { currentUser } = useCurrentUserStore();
+
+  const createdChild = async (e: React.MouseEvent, parentId: number) => {
+    e.stopPropagation();
+    const newNote = await noteRepository.create(currentUser!.id, { parentId });
+    noteStore.set([newNote]);
+  };
+
   return (
     <>
       <p
         className={cn(
           `hidden text-sm font-medium text-muted-foreground/80`,
-          layer === 0 && 'hidden'
+          layer === 0 && "hidden"
         )}
         style={{ paddingLeft: layer ? `${layer * 12 + 25}px` : undefined }}
       >
@@ -22,7 +34,11 @@ export function NoteList({ layer = 0, parentId }: NoteListProps) {
       {notes.map((note) => {
         return (
           <div key={note.id}>
-            <NoteItem layer={layer} />
+            <NoteItem
+              note={note}
+              layer={layer}
+              onCreate={(e) => createdChild(e, note.id)}
+            />
           </div>
         );
       })}

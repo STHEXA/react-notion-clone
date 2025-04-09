@@ -2,9 +2,29 @@ import { Navigate, Outlet } from "react-router-dom";
 import SideBar from "./components/SideBar";
 import { SearchModal } from "./components/SearchModal";
 import { useCurrentUserStore } from "./modules/auth/current-user.state";
+import { useNoteStore } from "./modules/notes/note.state";
+import { useEffect, useState } from "react";
+import { noteRepository } from "./modules/notes/note.repository";
 
 const Layout = () => {
   const { currentUser } = useCurrentUserStore();
+  const noteStore = useNoteStore();
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    fetchNotes();
+  }, []);
+
+  const fetchNotes = async () => {
+    console.log("kita");
+    setIsLoading(true);
+    const notes = await noteRepository.find(currentUser!.id);
+    console.log(notes);
+    if (notes === null) return;
+    console.log(notes);
+    noteStore.set(notes);
+    setIsLoading(false);
+  };
 
   if (currentUser === undefined) {
     return <Navigate replace to="/signin" />;
@@ -12,7 +32,7 @@ const Layout = () => {
 
   return (
     <div className="h-full flex">
-      <SideBar onSearchButtonClicked={() => {}} />
+      {!isLoading && <SideBar onSearchButtonClicked={() => {}} />}
       <main className="flex-1 h-full overflow-y-auto">
         <Outlet />
         <SearchModal
