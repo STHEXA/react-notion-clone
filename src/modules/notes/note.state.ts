@@ -17,8 +17,11 @@ export const useNoteStore = () => {
     });
   };
 
+  const getOne = (id: number) => notes.find((note) => note.id === id);
+
   return {
     getAll: () => notes,
+    getOne,
     set,
   };
 };
