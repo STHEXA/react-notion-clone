@@ -31,6 +31,15 @@ export const noteRepository = {
         : await query.is("parent_document", null);
     return data;
   },
+  async findByKeyword(userId: string, keyword: string) {
+    const { data } = await supabase
+      .from("notes")
+      .select()
+      .eq("user_id", userId)
+      .or(`title.ilike.%${keyword}%,content.ilike.%${keyword}%`)
+      .order("created_at", { ascending: false });
+    return data;
+  },
   async findOne(useId: string, id: number) {
     const { data } = await supabase
       .from("notes")
