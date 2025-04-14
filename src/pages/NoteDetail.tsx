@@ -28,7 +28,7 @@ const NoteDetail = () => {
 
   const updateNote = async (
     id: number,
-    note: { title?: string; context?: string }
+    note: { title?: string; content?: string }
   ) => {
     const updatedNote = await noteRepository.update(id, note);
     if (updatedNote == null) return;
@@ -47,7 +47,10 @@ const NoteDetail = () => {
           initialData={note}
           onTitleChange={(title) => updateNote(id, { title })}
         />
-        <Editor />
+        <Editor
+          initialContent={note.content}
+          onChange={(content) => updateNote(id, { content })}
+        />
       </div>
     </div>
   );

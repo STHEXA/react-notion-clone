@@ -10,10 +10,17 @@ interface EditorProps {
 }
 
 function Editor({ onChange, initialContent }: EditorProps) {
-  const editor = useCreateBlockNote({ dictionary: ja });
+  const editor = useCreateBlockNote({
+    dictionary: ja,
+    initialContent:
+      initialContent != null ? JSON.parse(initialContent) : undefined,
+  });
   return (
     <div>
-      <BlockNoteView editor={editor} />
+      <BlockNoteView
+        editor={editor}
+        onChange={() => onChange(JSON.stringify(editor.document))}
+      />
     </div>
   );
 }
